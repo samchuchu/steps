@@ -2,8 +2,9 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { InstructionStep } from "../types";
 
 // Initialize Gemini Client
-// process.env.API_KEY is assumed to be available in the environment
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Safely check for process.env to avoid crashing in browser environments where 'process' is undefined
+const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) ? process.env.API_KEY : '';
+const ai = new GoogleGenAI({ apiKey });
 
 export const generateNextStep = async (
   currentSteps: InstructionStep[],
