@@ -7,9 +7,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 // Define the sequence of steps here. 
 // Edit this array to change the content for each step in the flow.
 const INSTRUCTION_SEQUENCE = [
-  { title: 'Switch on all lights', description: 'Brighten the room immediately to wake up.' },
-  { title: 'Switch on all lights', description: 'Brighten the room immediately to wake up.' },
-  { title: 'Switch on all lights', description: 'Brighten the room immediately to wake up.' },
+  { title: 'LIGHTS ON', description: 'Switch on all lights.' },
+  { title: 'SYSTEM UP', description: 'Switch on the PC. The scanner and printer should start running, if not, please check if emergency stop button is pressed down or power supply is switched off. Release the emergency stop button / Switch on the power supply.' },
+  { title: 'LOGIN QDR', description: 'User: ^_^ Pass: ^_^' },
   { title: 'Switch on all lights', description: 'Brighten the room immediately to wake up.' },
   { title: 'Switch on all lights', description: 'Brighten the room immediately to wake up.' },
   { title: 'Switch on all lights', description: 'Brighten the room immediately to wake up.' },
