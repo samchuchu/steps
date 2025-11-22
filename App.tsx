@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { InstructionBubble } from './components/InstructionBubble';
 import { InstructionStep } from './types';
-import { RefreshCw, X } from 'lucide-react';
+import { ArrowLeft, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // Define the sequence of steps here. 
@@ -10,21 +10,21 @@ const INSTRUCTION_SEQUENCE = [
   { title: 'LIGHTS ON', description: 'Switch on all lights.' },
   { title: 'SYSTEM UP', description: 'Switch on the PC. The scanner and printer should start running, if not, please check if emergency stop button is pressed down or power supply is switched off. Release the emergency stop button / Switch on the power supply.' },
   { title: 'LOGIN QDR', description: 'User: ^_^ Pass: ^_^' },
-  { title: 'ROOM CHECK', description: 'Tidy up the room, move items back to storage if they show up in unusual places.' },
-  { title: 'CLEANING', description: 'Use Mikrozid wipes to clean the scanner / table pad.' },
+  { title: 'ROOM CHECK', description: 'Tidy up the room, move items back to storage if they show up in unusual places. e.g items left on scan table, items on the floor, phantom not kept in place.' },
+  { title: 'CLEANING', description: 'Use Mikrozid wipes to clean the scanner / table pad. Leave it dry.' },
   { title: 'BACK TO PC', description: 'Confirm system is fully up without any error message.' },
   { title: 'DAILY QC', description: 'Select Daily QC.' },
   { title: 'PLACE PHANTOM', description: 'Marking A to the left foot end, align laser cross hair B with the registration mark.' },
   { title: 'START QC', description: 'Press continue and let it run.' },
-  { title: 'SYSTEM TEST', description: 'If failed, follow instruction on screen to disolve the problem.' },
-  { title: 'AUTO QC', description: 'Passed - click OK. Failed - follow instruction on screen to disolve the problem' },
-  { title: 'AUTO BODY COMPOSITION CALIBRATION', description: 'It rund automatically once a week.' },
+  { title: 'SYSTEM TEST', description: 'If failed, follow instruction on screen to disolve the problem. Reapet QC.' },
+  { title: 'AUTO QC', description: '[Passed - click OK  ] Failed - follow instruction on screen to disolve the problem' },
+  { title: 'AUTO BODY COMPOSITION CALIBRATION', description: 'It runs automatically once a week.' },
   { title: 'REMOVE QC PHANTOM', description: 'Follow instruction on screen.' },
-  { title: 'UNIFORMITY TEST', description: 'Click Ok to proceed. Done, click OK.' },
-  { title: 'CHECK CONNECTION', description: 'Refresh patient list, make sure no connection error message.' },
-  { title: 'DAILY QC CHECK LIST', description: 'Complete the checklist, record details of any error message / event.' },
-  { title: 'TOP UP', description: 'Gowns / tissue / wipes / look around what is missing.' },
-  { title: 'UPDATE', description: 'Quick check appointment scheduler, update colleagues if any arrangement required.' },
+  { title: 'UNIFORMITY TEST', description: 'Click Ok to proceed. Test done, click OK.' },
+  { title: 'CHECK CONNECTION', description: "Retrieve patient list, it's to see now new names flow in, this step is to  make sure no connection error message." },
+  { title: 'DAILY QC CHECK LIST', description: 'Complete the checklist. Record any error message / event details and update your supervisor / colleagues.' },
+  { title: 'TOP-UP', description: 'Gowns / Blanket / Tissue / Wipes / Handrub, look around what is missing.' },
+  { title: 'UPDATE', description: 'A quick check on appointment scheduler, update colleagues if any arrangement required.' },
   { title: 'READY SET GO', description: "Delivering caring and positive experience is at the heart of healthcare. Just as important is smooth teamwork. Let's make today a good one 😁" },
 ];
 
@@ -73,15 +73,24 @@ const App: React.FC = () => {
     }
   };
 
-  const handleReset = () => {
-    if(confirm("Reset your flow?")) {
-        setIsFinished(false);
-        setSteps([{
-            id: `init-${Date.now()}`,
-            title: INSTRUCTION_SEQUENCE[0].title,
-            description: INSTRUCTION_SEQUENCE[0].description,
-            status: 'pending'
-        }]);
+  const handleBack = () => {
+    if (steps.length > 1) {
+        setSteps(prev => {
+            // Create a copy of the array excluding the last element (the current pending step)
+            const newHistory = prev.slice(0, -1);
+            
+            // Get the new last element (the previously completed step)
+            const lastIndex = newHistory.length - 1;
+            
+            // Mark it as pending again so the user can interact with it
+            if (lastIndex >= 0) {
+                newHistory[lastIndex] = { 
+                    ...newHistory[lastIndex], 
+                    status: 'pending' 
+                };
+            }
+            return newHistory;
+        });
     }
   };
 
@@ -123,12 +132,19 @@ const App: React.FC = () => {
               
               <div>
                  <button 
-                    onClick={handleReset}
-                    className="p-3 hover:bg-slate-200 rounded-full transition-colors text-slate-600 bg-white border border-slate-200 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-                    title="Reset Flow"
-                    aria-label="Reset Flow"
+                    onClick={handleBack}
+                    disabled={steps.length <= 1}
+                    className={`
+                        p-3 rounded-full transition-colors shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 border border-slate-200
+                        ${steps.length <= 1 
+                            ? 'text-slate-300 bg-slate-100 cursor-not-allowed' 
+                            : 'text-slate-600 bg-white hover:bg-slate-200'
+                        }
+                    `}
+                    title="Go Back to Previous Step"
+                    aria-label="Go Back to Previous Step"
                  >
-                    <RefreshCw className="w-6 h-6" />
+                    <ArrowLeft className="w-6 h-6" />
                  </button>
               </div>
             </div>

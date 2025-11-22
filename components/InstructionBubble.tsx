@@ -78,14 +78,20 @@ export const InstructionBubble: React.FC<InstructionBubbleProps> = ({ step, onCo
               {step.description}
             </p>
           )}
-
-          {!isCompleted && (
-            <span className="absolute bottom-12 text-xs font-bold text-slate-300 uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300">
-              Click to Complete
-            </span>
-          )}
         </div>
       </motion.button>
+
+      {/* Hint Text - Moved outside the button */}
+      {!isCompleted && (
+        <motion.span 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="mt-8 text-xs font-bold text-slate-400 uppercase tracking-[0.2em] animate-pulse pointer-events-none"
+        >
+            Click to Complete
+        </motion.span>
+      )}
     </div>
   );
 };
